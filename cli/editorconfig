@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+
+var inquirer = require('inquirer'),
+          fs = require('fs');
+
+var questions = [
+  // Asking if root . If empty, ignore
+  { type: 'input', name: 'root', message: 'Root?' },
+
+  // Asking if we want to create a new section.
+  { type: 'confirm', name: 'section', message: 'Create new section' },
+
+  // Section related questions
+  { type: 'input', name: 'section', message: 'section name', default: '*' },
+  { type: 'input', name: 'end_of_line', message: 'End of line', default:  'lf' },
+  { type: 'confirm', name: 'trim_trailing_whitespace', message: 'Trimming trailing whitespace.', default:  'true' },
+  { type: 'confirm', name: 'insert_final_newline', message: 'New line?', default:  'true' },
+  { type: 'list', name: 'indent_style', message: 'Indentation type', choices: ['space', 'tab'], default:  'space' },
+  { type: 'input', name: 'indent_size', message: 'Indentation size', default:  '2' }
+];
+
+inquirer.prompt([questions.shift()], function(answer)
+{
+  var output = '# Read more about http://editorconfig.org/ \n',
+  createSectionQuestion = [questions.shift()];
+
+  if(answer.root != "")
+  {
+    output+= 'root = ' + answer.root + '\n\n';
+  }
+
+  var promptCreateSection = function(done)
+  {
+    inquirer.prompt(createSectionQuestion, function(answer)
+    {
+      if(answer.section == "") return done();
+
+      promptSectionProperties(done);
+    });
+  }
+
+  var promptSectionProperties = function(done)
+  {
+    inquirer.prompt(questions, function(answers) {
+      output+= '[' + answers.section + ']\n';
+
+      delete answers.section;
+
+      output+= Object.keys(answers).map(function (property) {
+        return property + ' = ' + answers[property];
+      }).join('\n') + '\n\n';
+
+      promptCreateSection(done);
+    });
+  }
+
+  // First time is mandatory... otherwise, why would you run this
+  promptSectionProperties(function() {
+    fs.writeFile('.editorconfig', output, function() {
+      console.log('File created => ' + __dirname + '/.editorconfig');
+    });
+  });
+});
