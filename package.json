@@ -1,0 +1,21 @@
+{
+  "name": "cli-tools",
+  "version": "1.0.0",
+  "description": "Set of personal command line tools",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joseadrian/cli-tools.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joseadrian/cli-tools/issues"
+  },
+  "homepage": "https://github.com/joseadrian/cli-tools",
+  "dependencies": {
+    "inquirer": "^0.8.0"
+  }
+}
